@@ -6,17 +6,20 @@ This project is an enterprise-grade automation engine built on **n8n**. It autom
 ## 🧠 System Architecture
 The engine consists of three core workflows designed to work in synchronization:
 
-### 1. Intelligent Outreach Engine
+### 1. Intelligent Outreach Engine<img width="1712" height="859" alt="Screenshot (210)" src="https://github.com/user-attachments/assets/bc869c22-ba6d-4dbc-a812-b695e047b1b9" />
+
 - **Verification:** Integrated with **ZeroBounce API** to ensure 100% list hygiene before sending.
 - **Dynamic Sequencing:** Multi-stage follow-up logic based on lead status.
 - **Deliverability:** Implemented smart batching and human-like delays to maintain high sender reputation.
 
-### 2. Multi-Layered Tracking Listener
+### 2. Multi-Layered Tracking Listener<img width="1268" height="774" alt="Screenshot (209)" src="https://github.com/user-attachments/assets/6c491407-5edb-4684-b862-8294303382ba" />
+
 - **Open Tracking:** Custom webhook listener for invisible 1x1 tracking pixels.
 - **Click Redirector:** A specialized redirect logic that logs link engagement before sending leads to the booking page.
 - **Booking Sync:** Real-time webhook integration with **Cal.com** to update conversion status.
 
-### 3. AI Auto-Reply Agent
+### 3. AI Auto-Reply Agent<img width="1140" height="582" alt="Screenshot (211)" src="https://github.com/user-attachments/assets/d90a456a-f829-4f01-b87c-d3e6454ac71b" />
+
 - **Autonomous Responses:** Uses **GPT-4o-mini** to analyze incoming lead queries (Pricing, Services, Slots).
 - **Context-Aware:** Drafts and sends professional replies instantly based on a predefined company knowledge base.
 - **Stop-Logic:** Automatically halts all outreach sequences once a reply or booking is detected.
