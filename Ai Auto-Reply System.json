@@ -1,0 +1,98 @@
+{
+  "name": "Ai Auto-Reply System (Gmail)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "read": "unread"
+        },
+        "options": {}
+      },
+      "id": "6f64e5fa-074f-4653-b2ed-1e41c1a08b15",
+      "name": "On New Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        592,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $node[\"On New Email\"].json.id }}",
+        "message": "={{ $node[\"Message a model\"].json.content }}",
+        "options": {}
+      },
+      "id": "05d7fa01-51a4-4595-b0e2-e5da87cd53ed",
+      "name": "Send AI Response",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1104,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "\"You are the Senior Sales Assistant at Techionik.ltd. Your goal is to answer lead queries professionally. Use these rules:\nServices: We provide n8n automation and AI agents.\nPricing: Custom quotes only after a call.\nBooking: Always push them to book a meeting using the link provided in the user message.\nKeep it under 100 words.\""
+            },
+            {
+              "content": "={{ $json.body.content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        112
+      ],
+      "id": "67e5b6c0-3e87-43ab-8d3a-ace10d59160a",
+      "name": "Message a model"
+    }
+  ],
+  "connections": {
+    "On New Email": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

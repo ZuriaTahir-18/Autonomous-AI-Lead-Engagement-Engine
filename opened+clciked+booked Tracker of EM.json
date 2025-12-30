@@ -1,0 +1,265 @@
+{
+  "name": "opened+clciked+booked Tracker of EM",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "opened": "TRUE",
+            "opened_at": "={{ $now.setZone('Asia/Karachi').toFormat('h:mm a M_d_yy') }}",
+            "email": "={{ $json.params.email }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "email"
+          ]
+        }
+      },
+      "id": "489208d2-7aeb-4ff3-a2bb-48e08cbd9c98",
+      "name": "Mark as Opened",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        224,
+        0
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const transparentGif = \"R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\";\nitem.binary = {\n  data: {\n    data: transparentGif,\n    mimeType: \"image/gif\",\n    fileName: \"pixel.gif\"\n  }\n};\nreturn item;"
+      },
+      "id": "cf94c367-a708-427f-a32b-23ed3525518a",
+      "name": "Create 1x1 GIF",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        448,
+        0
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "responseDataSource": "setBodyField",
+        "options": {}
+      },
+      "id": "886d9400-1e2f-438d-b4b9-b820e2ed577d",
+      "name": "Respond to Email Client",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        672,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": 0,
+            "email": "={{ $json.query.email }}",
+            "clicked": "TRUE"
+          },
+          "matchingColumns": [
+            "email"
+          ]
+        }
+      },
+      "id": "804433bc-3def-495a-b687-f8a11af899a4",
+      "name": "Mark as clicked",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        240,
+        224
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "respondWith": "redirect",
+        "redirectURL": "https://cal.com/YOUR_LINK",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        576,
+        224
+      ],
+      "id": "03d45e28-319e-4fc5-aa09-0a0db646f381",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.body.payload.attendees[0].email }}",
+            "row_number": 0,
+            "booked": "TRUE",
+            "meeting_status": "Booked"
+          },
+          "matchingColumns": [
+            "email"
+          ]
+        }
+      },
+      "id": "56b9f0ad-3261-4aac-8e91-e2f8fb39c108",
+      "name": "Mark as booked",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        240,
+        464
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "path": "track/:email",
+        "options": {}
+      },
+      "id": "046dd416-2f06-4937-932a-61bc993c5ed5",
+      "name": "Open tracker",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "path": "click",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        224
+      ],
+      "id": "ceb0f426-c9b0-42be-9c2d-f61107f1ac44",
+      "name": "Click tracker"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "booking",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        464
+      ],
+      "id": "2bda9a07-3e88-4b89-8868-77f8a2e19f2d",
+      "name": "Booking tracker"
+    }
+  ],
+  "connections": {
+    "Mark as Opened": {
+      "main": [
+        [
+          {
+            "node": "Create 1x1 GIF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create 1x1 GIF": {
+      "main": [
+        [
+          {
+            "node": "Respond to Email Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as clicked": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open tracker": {
+      "main": [
+        [
+          {
+            "node": "Mark as Opened",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Click tracker": {
+      "main": [
+        [
+          {
+            "node": "Mark as clicked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking tracker": {
+      "main": [
+        [
+          {
+            "node": "Mark as booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

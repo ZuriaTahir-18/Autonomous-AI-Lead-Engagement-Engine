@@ -1,0 +1,78 @@
+{
+  "name": "EM (validation+batching)",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"emails\": [\n    {\n      \"message\": \"Hi {name},<br><br>Initial Email Content.<br><br>Regards.\",\n      \"send_on_day\": 0\n    }\n  ],\n  \"opened_template\": \"Hi {name}, Thanks for opening!\",\n  \"demo_template\": \"Hi {name}, I noticed you clicked but didn't book. [LINK]\"\n}",
+        "options": {}
+      },
+      "id": "7ff412e3-47c4-4b35-a441-0fb3226fe896",
+      "name": "Email sequence",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -3344,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Logic scrubbed for security - remains functional"
+      },
+      "id": "353dc700-9290-4fd2-82ff-8daa0b79bffb",
+      "name": "Classify threads",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1360,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": "YOUR_SPREADSHEET_ID",
+        "sheetName": "Sheet1",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_emailed": "=",
+            "email": "={{ $('Compose message').item.json.to_email }}",
+            "sent_status": "={{ $('Prepare reply params').item.json.status_label }}"
+          }
+        }
+      },
+      "id": "9c5b291b-a431-423f-b8a5-fbae8b641a55",
+      "name": "Update last contacted time",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -464,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.zerobounce.net/v2/validate?api_key=YOUR_API_KEY&email={{ $json.email }}"
+      },
+      "id": "d786154b-db36-4cbc-92ee-7b732c373394",
+      "name": "ZeroBounce Verification",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -2192,
+        576
+      ]
+    }
+  ],
+  "connections": {
+    "Email sequence": {
+      "main": [
+        [
+          {
+            "node": "Get emails1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
